@@ -1,25 +1,44 @@
 package ui.stu_views;
 
-import JDBC.ConnectionUtil;
-import net.coobird.thumbnailator.Thumbnails;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import tools.ConfigUtil;
-import ui.components.BaseFrame;
-import ui.components.BaseLabel;
-import ui.components.BasePanel;
-import ui.start_views.LoginFrame;
-
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.GridLayout;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Hashtable;
+
+import javax.imageio.ImageIO;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.JSplitPane;
+import javax.swing.border.EmptyBorder;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import JDBC.ConnectionUtil;
+import net.coobird.thumbnailator.Thumbnails;
+import tools.ConfigUtil;
+import ui.components.BaseFrame;
+import ui.components.BaseLabel;
+import ui.components.BasePanel;
+import ui.start_views.LoginFrame;
 
 public class StudentBackendFrame extends BaseFrame {
     private static final Log log = LogFactory.getLog(StudentBackendFrame.class);
@@ -59,10 +78,10 @@ public class StudentBackendFrame extends BaseFrame {
         navPanel.add(topButton);
         navPanel.add(Box.createVerticalStrut(40)); // 添加垂直间隔
 
-        // 创建三个居中按钮
+        // 创建四个居中按钮
         // 创建存储按钮图片的列表
         String[] imagePaths = {"/images/test.png", "/images/exam.png", "/images/error_book.png"};
-        String[] functioStrings = {"增强练习", "模拟考试", "错题集"};
+        String[] functioStrings = {"增强练习", "模拟考试", "错题集", "浏览题目"};
         for (int i = 0; i < 3; i++) {
             ImageIcon centericon = scaleImageIcon(getClass().getResourceAsStream(imagePaths[i]), 40,40);
             JButton centerButton = new JButton(centericon);
@@ -76,6 +95,18 @@ public class StudentBackendFrame extends BaseFrame {
             navPanel.add(Box.createVerticalStrut(20)); // 添加垂直间隔
             navPanel.add(centerButton);
         }
+
+        // 第四个按钮：浏览题目（使用 Java2D 绘制的图标）
+        ImageIcon browseIcon = createBrowseIcon(40, 40);
+        JButton browseButton = new JButton(browseIcon);
+        browseButton.setPreferredSize(new Dimension(60, 60));
+        browseButton.setFocusable(false);
+        browseButton.setBorderPainted(false);
+        browseButton.addActionListener(e -> {
+            panelJumping("浏览题目");
+        });
+        navPanel.add(Box.createVerticalStrut(20));
+        navPanel.add(browseButton);
 
         // 创建底部按钮
         ImageIcon buttomicon = scaleImageIcon(getClass().getResourceAsStream("/images/menu.png"), 40,40);
@@ -128,6 +159,57 @@ public class StudentBackendFrame extends BaseFrame {
             e.printStackTrace();
             return null;
         }
+    }
+
+    /**
+     * 使用 Java2D 生成浏览题目的图标（文档+放大镜）
+     */
+    private ImageIcon createBrowseIcon(int width, int height) {
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = image.createGraphics();
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        Color iconColor = new Color(128, 128, 128);
+        float strokeSize = Math.max(1.5f, width / 20f);
+        g2d.setStroke(new BasicStroke(strokeSize));
+
+        // 绘制文档形状
+        int docX = (int) (width * 0.08);
+        int docY = (int) (height * 0.08);
+        int docW = (int) (width * 0.52);
+        int docH = (int) (height * 0.65);
+        g2d.setColor(iconColor);
+        g2d.drawRoundRect(docX, docY, docW, docH, 5, 5);
+
+        // 文档上的横线
+        int lineLeft = docX + (int) (docW * 0.15);
+        int lineRight = docX + (int) (docW * 0.8);
+        int lineY1 = docY + (int) (docH * 0.25);
+        int lineY2 = docY + (int) (docH * 0.45);
+        int lineY3 = docY + (int) (docH * 0.65);
+        float smallStroke = Math.max(1f, width / 30f);
+        g2d.setStroke(new BasicStroke(smallStroke));
+        g2d.drawLine(lineLeft, lineY1, lineRight, lineY1);
+        g2d.drawLine(lineLeft, lineY2, (int) (lineRight * 0.85), lineY2);
+        g2d.drawLine(lineLeft, lineY3, (int) (lineRight * 0.7), lineY3);
+
+        // 绘制放大镜手柄
+        g2d.setStroke(new BasicStroke(strokeSize * 1.2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        int handleX = (int) (width * 0.7);
+        int handleY = (int) (height * 0.68);
+        int handleEndX = (int) (width * 0.88);
+        int handleEndY = (int) (height * 0.9);
+        g2d.drawLine(handleX, handleY, handleEndX, handleEndY);
+
+        // 绘制放大镜框
+        int circleX = (int) (width * 0.56);
+        int circleY = (int) (height * 0.1);
+        int circleSize = (int) (width * 0.38);
+        g2d.setStroke(new BasicStroke(strokeSize));
+        g2d.drawOval(circleX, circleY, circleSize, circleSize);
+
+        g2d.dispose();
+        return new ImageIcon(image);
     }
 
     private void panelJumping(String selectedItem) {
@@ -395,6 +477,12 @@ public class StudentBackendFrame extends BaseFrame {
                 buttonPanel.add(startButton);
                 centerContentPanel.add(new BasePanel());
                 centerContentPanel.add(buttonPanel);
+                break;
+            }
+            case "浏览题目" -> {
+                centerContentPanel.setLayout(new BorderLayout());
+                BrowseQuestionsPanel browsePanel = new BrowseQuestionsPanel(connectionUtil);
+                centerContentPanel.add(browsePanel, BorderLayout.CENTER);
                 break;
             }
             default -> throw new AssertionError();
