@@ -25,7 +25,7 @@ import ui.components.BaseLabel;
 import ui.components.BasePanel;
 
 /**
- * 浏览题目面板 - 让学生可以浏览某个标签下所有题目的只读视图
+ * 题目遍览面板 - 让学生可以浏览某个标签下所有题目的只读视图
  */
 public class BrowseQuestionsPanel extends BasePanel {
 

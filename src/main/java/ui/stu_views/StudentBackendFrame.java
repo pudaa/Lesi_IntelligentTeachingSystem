@@ -77,7 +77,7 @@ public class StudentBackendFrame extends BaseFrame {
         // 创建四个居中按钮
         // 创建存储按钮图片的列表
         String[] imagePaths = {"/images/test.png", "/images/exam.png", "/images/error_book.png"};
-        String[] functioStrings = {"增强练习", "模拟考试", "错题集", "浏览题目"};
+        String[] functioStrings = {"增强练习", "模拟考试", "错题集", "题目遍览"};
         for (int i = 0; i < 3; i++) {
             ImageIcon centericon = scaleImageIcon(getClass().getResourceAsStream(imagePaths[i]), 40,40);
             JButton centerButton = new JButton(centericon);
@@ -92,14 +92,14 @@ public class StudentBackendFrame extends BaseFrame {
             navPanel.add(centerButton);
         }
 
-        // 第四个按钮：浏览题目
+        // 第四个按钮：题目遍览
         ImageIcon browseIcon = scaleImageIcon(getClass().getResourceAsStream("/images/browse.png"), 40, 40);
         JButton browseButton = new JButton(browseIcon);
         browseButton.setPreferredSize(new Dimension(60, 60));
         browseButton.setFocusable(false);
         browseButton.setBorderPainted(false);
         browseButton.addActionListener(e -> {
-            panelJumping("浏览题目");
+            panelJumping("题目遍览");
         });
         navPanel.add(Box.createVerticalStrut(20));
         navPanel.add(browseButton);
@@ -158,7 +158,7 @@ public class StudentBackendFrame extends BaseFrame {
     }
 
     /**
-     * 使用 Java2D 生成浏览题目的图标（文档+放大镜）
+     * 使用 Java2D 生成题目遍览的图标（文档+放大镜）
      */
     private void panelJumping(String selectedItem) {
         //System.out.println("selectedItem: " + selectedItem);
@@ -427,7 +427,7 @@ public class StudentBackendFrame extends BaseFrame {
                 centerContentPanel.add(buttonPanel);
                 break;
             }
-            case "浏览题目" -> {
+            case "题目遍览" -> {
                 centerContentPanel.setLayout(new BorderLayout());
                 BrowseQuestionsPanel browsePanel = new BrowseQuestionsPanel(connectionUtil);
                 centerContentPanel.add(browsePanel, BorderLayout.CENTER);
