@@ -1,12 +1,19 @@
 package JDBC;
 
-import utils.EncryptionUtil;
-
 import java.io.File;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import utils.EncryptionUtil;
 
 public class SQLiteConnectionUtil {
     private Connection conn = null;
@@ -87,18 +94,12 @@ public class SQLiteConnectionUtil {
         return conn;
     }
 
-    // 同步题库数据
+    // 同步题库数据（使用 INSERT OR REPLACE 避免全表删除）
     public void syncTikuData(List<List<Object>> tikuData) {
         if (conn == null) return;
         
         try {
-            // 清空现有数据
-            try (Statement stmt = conn.createStatement()) {
-                stmt.execute("DELETE FROM tiku");
-            }
-            
-            // 插入新数据
-            String sql = "INSERT INTO tiku (topic_ID, topic_type, topic, options, true_answer, label) VALUES (?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT OR REPLACE INTO tiku (topic_ID, topic_type, topic, options, true_answer, label) VALUES (?, ?, ?, ?, ?, ?)";
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 for (List<Object> row : tikuData) {
                     pstmt.setInt(1, (Integer) row.get(0));
@@ -116,18 +117,12 @@ public class SQLiteConnectionUtil {
         }
     }
     
-    // 同步账户数据
+    // 同步账户数据（使用 INSERT OR REPLACE 避免全表删除）
     public void syncAccountData(List<Map<String, Object>> accountData) {
         if (conn == null) return;
         
         try {
-            // 清空现有数据
-            try (Statement stmt = conn.createStatement()) {
-                stmt.execute("DELETE FROM account");
-            }
-            
-            // 插入新数据（加密密码）
-            String sql = "INSERT INTO account (people_ID, people_name, password, phone_number, grade) VALUES (?, ?, ?, ?, ?)";
+            String sql = "INSERT OR REPLACE INTO account (people_ID, people_name, password, phone_number, grade) VALUES (?, ?, ?, ?, ?)";
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 for (Map<String, Object> row : accountData) {
                     pstmt.setString(1, (String) row.get("people_ID"));

@@ -1,8 +1,12 @@
 // 在utils包中创建RunStatusManager.java
 package utils;
 
-import java.io.*;
-import java.nio.file.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 public class RunStatusManager {
@@ -32,6 +36,15 @@ public class RunStatusManager {
         long lastSync = getLastSyncTime();
         long currentTime = System.currentTimeMillis();
         return (currentTime - lastSync) > intervalMillis;
+    }
+
+    /**
+     * 更新上次同步时间（不与首次运行标记绑定）
+     */
+    public static void updateLastSyncTime() {
+        Properties props = loadProperties();
+        props.setProperty(LAST_SYNC_TIME, String.valueOf(System.currentTimeMillis()));
+        saveProperties(props);
     }
 
     private static Properties loadProperties() {

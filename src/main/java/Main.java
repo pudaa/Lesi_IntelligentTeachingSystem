@@ -62,26 +62,21 @@ public class Main {
     }
 
     public static ConnectionUtil getConn() {
-        ConnectionUtil _connUtil = null;
+        ConnectionUtil connUtil = new ConnectionUtil("lesi_intelligent teaching system");
         if (RunStatusManager.isFirstRun() || RunStatusManager.needSync(5 * 60 * 1000)) {
-            SwingUtilities.invokeLater(() -> { // 创建一个临时窗口
+            SwingUtilities.invokeLater(() -> {
                 JFrame dummyFrame = new JFrame();
-                dummyFrame.setUndecorated(true); // 创建无边框窗口
+                dummyFrame.setUndecorated(true);
                 dummyFrame.setAlwaysOnTop(true);
-                // 居中显示
                 dummyFrame.setLocationRelativeTo(null);
                 dummyFrame.setVisible(true);
 
-                ConnectionUtil connUtil = new ConnectionUtil("lesi_intelligent teaching system");
                 SyncProgressDialog.showSyncDialog(dummyFrame, connUtil);
 
                 dummyFrame.dispose();
             });
-            _connUtil = new ConnectionUtil("lesi_intelligent teaching system");
-        } else {
-            _connUtil = new ConnectionUtil("lesi_intelligent teaching system");
         }
-        return _connUtil;
+        return connUtil;
     }
 }
 // mvn clean package

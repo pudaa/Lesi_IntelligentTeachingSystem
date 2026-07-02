@@ -1,14 +1,10 @@
 package ui.stu_views;
 
-import java.awt.BasicStroke;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.Graphics2D;
 import java.awt.GridLayout;
-import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -96,8 +92,8 @@ public class StudentBackendFrame extends BaseFrame {
             navPanel.add(centerButton);
         }
 
-        // 第四个按钮：浏览题目（使用 Java2D 绘制的图标）
-        ImageIcon browseIcon = createBrowseIcon(40, 40);
+        // 第四个按钮：浏览题目
+        ImageIcon browseIcon = scaleImageIcon(getClass().getResourceAsStream("/images/browse.png"), 40, 40);
         JButton browseButton = new JButton(browseIcon);
         browseButton.setPreferredSize(new Dimension(60, 60));
         browseButton.setFocusable(false);
@@ -164,54 +160,6 @@ public class StudentBackendFrame extends BaseFrame {
     /**
      * 使用 Java2D 生成浏览题目的图标（文档+放大镜）
      */
-    private ImageIcon createBrowseIcon(int width, int height) {
-        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = image.createGraphics();
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-        Color iconColor = new Color(128, 128, 128);
-        float strokeSize = Math.max(1.5f, width / 20f);
-        g2d.setStroke(new BasicStroke(strokeSize));
-
-        // 绘制文档形状
-        int docX = (int) (width * 0.08);
-        int docY = (int) (height * 0.08);
-        int docW = (int) (width * 0.52);
-        int docH = (int) (height * 0.65);
-        g2d.setColor(iconColor);
-        g2d.drawRoundRect(docX, docY, docW, docH, 5, 5);
-
-        // 文档上的横线
-        int lineLeft = docX + (int) (docW * 0.15);
-        int lineRight = docX + (int) (docW * 0.8);
-        int lineY1 = docY + (int) (docH * 0.25);
-        int lineY2 = docY + (int) (docH * 0.45);
-        int lineY3 = docY + (int) (docH * 0.65);
-        float smallStroke = Math.max(1f, width / 30f);
-        g2d.setStroke(new BasicStroke(smallStroke));
-        g2d.drawLine(lineLeft, lineY1, lineRight, lineY1);
-        g2d.drawLine(lineLeft, lineY2, (int) (lineRight * 0.85), lineY2);
-        g2d.drawLine(lineLeft, lineY3, (int) (lineRight * 0.7), lineY3);
-
-        // 绘制放大镜手柄
-        g2d.setStroke(new BasicStroke(strokeSize * 1.2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-        int handleX = (int) (width * 0.7);
-        int handleY = (int) (height * 0.68);
-        int handleEndX = (int) (width * 0.88);
-        int handleEndY = (int) (height * 0.9);
-        g2d.drawLine(handleX, handleY, handleEndX, handleEndY);
-
-        // 绘制放大镜框
-        int circleX = (int) (width * 0.56);
-        int circleY = (int) (height * 0.1);
-        int circleSize = (int) (width * 0.38);
-        g2d.setStroke(new BasicStroke(strokeSize));
-        g2d.drawOval(circleX, circleY, circleSize, circleSize);
-
-        g2d.dispose();
-        return new ImageIcon(image);
-    }
-
     private void panelJumping(String selectedItem) {
         //System.out.println("selectedItem: " + selectedItem);
         // 设置相关参数

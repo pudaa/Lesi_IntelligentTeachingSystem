@@ -1,13 +1,12 @@
 package JDBC;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import utils.DataSyncUtil;
 import utils.RunStatusManager;
 import utils.SyncTaskManager;
-
-import java.sql.*;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.Date;
 
 public class ConnectionUtil {
     private SQLiteConnectionUtil sqliteConn;
@@ -18,30 +17,33 @@ public class ConnectionUtil {
     public ConnectionUtil(String database) {
         this.currentDatabase = database;
 
-        // 初始化本地SQLite连接
+        // 仅初始化本地SQLite连接，不同步
         sqliteConn = new SQLiteConnectionUtil();
         System.out.println("本地SQLite数据库初始化完成");
 
-        // 检查服务器连接状态
-        if (DataSyncUtil.isServerReachable()) {
-            if (RunStatusManager.isFirstRun()){
-                System.out.println("首次运行，执行完整数据同步...");
-                performFullSync(database);
-                RunStatusManager.markFirstRunCompleted();
-                useLocal = true; // 同步完成后使用本地数据库
+        // 默认使用本地数据库
+        useLocal = true;
+    }
 
+    /**
+     * 检查是否需要同步，如果需要则执行同步
+     * 将同步逻辑从构造器中分离，避免每次创建连接时触发同步
+     */
+    public void syncIfNeeded() {
+        if (DataSyncUtil.isServerReachable()) {
+            if (RunStatusManager.isFirstRun()) {
+                System.out.println("首次运行，执行完整数据同步...");
+                performFullSync(currentDatabase);
+                RunStatusManager.markFirstRunCompleted();
             } else if (RunStatusManager.needSync(5 * 60 * 1000)) {
-                System.out.println("超过5分钟未同步，执行增量同步...");
-                performFullSync(database);
-                RunStatusManager.markFirstRunCompleted(); // 也可以创建一个新的方法updateLastSyncTime()
-                useLocal = true; // 同步完成后使用本地数据库
+                System.out.println("超过5分钟未同步，执行数据同步...");
+                performFullSync(currentDatabase);
+                RunStatusManager.updateLastSyncTime();
             } else {
-                System.out.println("使用本地缓存数据");
-                useLocal = true; // 同步完成后使用本地数据库
+                System.out.println("距上次同步不足5分钟，使用本地缓存数据");
             }
         } else {
             System.out.println("服务器不可达，使用本地数据库");
-            useLocal = true;
         }
     }
 
@@ -120,6 +122,8 @@ public class ConnectionUtil {
             }
 
             listener.onProgressUpdate(100, "同步完成");
+            // 更新同步时间戳
+            RunStatusManager.updateLastSyncTime();
             return true;
         } catch (Exception e) {
             listener.onError(e);
