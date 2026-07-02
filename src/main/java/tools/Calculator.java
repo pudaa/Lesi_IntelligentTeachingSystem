@@ -1,9 +1,11 @@
 package tools;
 
-import JDBC.ConnectionUtil;
-
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import JDBC.ConnectionUtil;
 
 
 public class Calculator {
@@ -58,7 +60,31 @@ public class Calculator {
             row.add(null);
             returnList.add(row);
         }
+        // 对相同掌握程度的题目进行随机打乱，避免同类型题目集中出现
+        shuffleSameMasteryLevel(returnList);
         return returnList;
+    }
+
+    /**
+     * 对相同掌握程度的题目进行分组内随机打乱，同时按掌握程度升序排列
+     * 这样低掌握度的题目优先出现，同掌握度的题目顺序随机
+     */
+    private void shuffleSameMasteryLevel(List<List<Object>> list) {
+        // 按掌握程度分组
+        Map<Integer, List<List<Object>>> groups = new HashMap<>();
+        for (List<Object> row : list) {
+            int level = ((Number) row.get(0)).intValue();
+            groups.computeIfAbsent(level, k -> new ArrayList<>()).add(row);
+        }
+        // 对每组内部随机打乱，然后按掌握程度升序合并
+        list.clear();
+        List<Integer> sortedLevels = new ArrayList<>(groups.keySet());
+        java.util.Collections.sort(sortedLevels);
+        for (int level : sortedLevels) {
+            List<List<Object>> group = groups.get(level);
+            java.util.Collections.shuffle(group);
+            list.addAll(group);
+        }
     }
 
     // 获得该学生在模拟考试中需要做的题目，随机打乱并返回一个二维列表，每行主要存储有：topic_ID、做题情况

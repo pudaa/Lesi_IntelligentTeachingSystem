@@ -1,19 +1,28 @@
 package ui.stu_views;
 
-import JDBC.ConnectionUtil;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import JDBC.ConnectionUtil;
 import tools.Calculator;
 import ui.components.BaseLabel;
 import ui.components.BasePanel;
 import ui.components.OptionsPanel;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class StrengthenExercisePanel extends BasePanel {
@@ -136,11 +145,25 @@ public class StrengthenExercisePanel extends BasePanel {
             appendingList.set(0, ((Number) sortingBasis.get(currentQuestionIndex).get(0)).intValue() + randomIncrement);
             // 插入新的记录
             sortingBasis.add(appendingList);
-            // 排序
-            // sortingBasis.sort((o1, o2) -> ((Number) o1.get(0)).intValue() - ((Number) o2.get(0)).intValue());
+            // 对剩余题目重新排序：按掌握程度升序，相同掌握程度时随机打乱
             if (currentQuestionIndex + 1 < sortingBasis.size()) {
-                sortingBasis.subList(currentQuestionIndex + 1, sortingBasis.size())
-                    .sort((o1, o2) -> ((Number) o1.get(0)).intValue() - ((Number) o2.get(0)).intValue());
+                List<List<Object>> remaining = sortingBasis.subList(currentQuestionIndex + 1, sortingBasis.size());
+                // 先按掌握程度排序
+                remaining.sort((o1, o2) -> ((Number) o1.get(0)).intValue() - ((Number) o2.get(0)).intValue());
+                // 再对相同掌握程度的分组内随机打乱
+                java.util.Map<Integer, java.util.List<List<Object>>> groups = new java.util.HashMap<>();
+                for (List<Object> row : remaining) {
+                    int level = ((Number) row.get(0)).intValue();
+                    groups.computeIfAbsent(level, k -> new java.util.ArrayList<>()).add(row);
+                }
+                remaining.clear();
+                java.util.List<Integer> sortedLevels = new java.util.ArrayList<>(groups.keySet());
+                java.util.Collections.sort(sortedLevels);
+                for (int level : sortedLevels) {
+                    java.util.List<List<Object>> group = groups.get(level);
+                    java.util.Collections.shuffle(group);
+                    remaining.addAll(group);
+                }
             }
             // 显示下一题
             if (currentQuestionIndex < sortingBasis.size() - 1)currentQuestionIndex++;
