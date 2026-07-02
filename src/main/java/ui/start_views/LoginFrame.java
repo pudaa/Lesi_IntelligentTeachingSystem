@@ -1,16 +1,28 @@
 package ui.start_views;
 
-import JDBC.ConnectionUtil;
-import tools.ConfigUtil;
-import ui.stu_views.StudentBackendFrame;
-import ui.tea_views.TeacherBackendFrame;
-import ui.components.BaseFrame;
-import ui.components.BasePanel;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.util.List;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+
+import JDBC.ConnectionUtil;
+import tools.ConfigUtil;
+import ui.components.BaseFrame;
+import ui.components.BasePanel;
+import ui.stu_views.StudentBackendFrame;
+import ui.tea_views.TeacherBackendFrame;
 
 
 
@@ -73,7 +85,7 @@ public class LoginFrame extends BaseFrame {
             passwordLabel.setForeground(new Color(128, 128, 128));
             centerPanel.add(passwordLabel);//将密码标签加入到中心区域
     
-            JTextField passwordField = new JPasswordField();
+            JPasswordField passwordField = new JPasswordField();
             passwordField.setBounds(30, 120, 225, 40);//设置Password输入框的X，Y坐标和宽、高
             passwordField.setFont(new Font("微软雅黑", Font.BOLD, 20));
             centerPanel.add(passwordField);//将密码输入框加入到中心区域
@@ -91,7 +103,7 @@ public class LoginFrame extends BaseFrame {
             
             loginButton.addActionListener((ActionEvent e) -> {
                 String phonenum = phonenumField.getText();//获取用户名输入框的内容
-                String password = passwordField.getText();//获取密码输入框的内容
+                String password = new String(passwordField.getPassword());//获取密码输入框的内容
                 //调用ConnectionUtil类对象的login_jdbc方法，获得登录结果，需要先传递用户名和密码参数
                 List<String> reslut = connectionUtil.login_jdbc(phonenum, password);
                 switch (reslut.get(0)) {

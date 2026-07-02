@@ -1,19 +1,14 @@
 package utils;
 
-import JDBC.ConnectionUtil;
-import JDBC.SQLiteConnectionUtil;
-
-import java.sql.*;
-import java.util.List;
-import java.util.Map;
+import tools.ConfigUtil;
 
 public class DataSyncUtil {
 
     public static boolean isServerReachable() {
         try {
-            // 简单的网络可达性测试，避免创建ConnectionUtil实例
-            String server = "frp-bar.com";
-            int port = 18714;
+            // 从配置文件读取服务器信息（可在 lesi_user_config.properties 中覆盖）
+            String server = ConfigUtil.getProperty("db.server");
+            int port = Integer.parseInt(ConfigUtil.getProperty("db.port"));
 
             // 使用Socket测试端口连通性
             try (java.net.Socket socket = new java.net.Socket()) {

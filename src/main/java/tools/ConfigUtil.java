@@ -1,10 +1,17 @@
 package tools;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Properties;
+
+import javax.imageio.ImageIO;
 
 @SuppressWarnings("CallToPrintStackTrace")
 public class ConfigUtil {
@@ -34,14 +41,25 @@ public class ConfigUtil {
             }
         } else {
             // 如果用户目录下没有配置文件，从资源文件中加载默认配置
-            try (InputStream inputStream = ConfigUtil.class.getClassLoader().getResourceAsStream("db/config.properties")) {
-                if (inputStream != null) {
-                    properties.load(inputStream);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+            boolean loaded = tryLoadFromClasspath("db/config.properties");
+            if (!loaded) {
+                // 如果 config.properties 不存在（已被 .gitignore），尝试加载模板文件
+                tryLoadFromClasspath("db/config.properties.example");
             }
         }
+    }
+
+    // 尝试从类路径加载指定配置文件
+    private static boolean tryLoadFromClasspath(String path) {
+        try (InputStream inputStream = ConfigUtil.class.getClassLoader().getResourceAsStream(path)) {
+            if (inputStream != null) {
+                properties.load(inputStream);
+                return true;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
 

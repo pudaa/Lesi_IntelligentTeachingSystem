@@ -42,12 +42,25 @@ out/
 .sts4-cache
 bin/
 
+# === VS Code ===
+.vscode/
+*.code-workspace
+
 # === IDE - NetBeans ===
 nbproject/private/
 nbbuild/
 dist/
 nbdist/
 .nb-gradle/
+
+# === User Configuration (contains sensitive info) ===
+lesi_user_config.properties
+src/main/resources/db/config.properties
+
+# === Runtime Data ===
+data/run_status.properties
+data/local_data.db
+*.log
 build/
 !**/src/main/**/build/
 !**/src/test/**/build/

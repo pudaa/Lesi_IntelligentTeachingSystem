@@ -1,0 +1,32 @@
+# ========================================
+# 乐思智能刷题系统 - 配置文件模板
+# ========================================
+# 使用方法：
+# 1. 复制本文件为 config.properties（同目录下）
+# 2. 填写你自己的数据库连接信息和加密密钥
+# 3. config.properties 已被 .gitignore 忽略，不会上传到 GitHub
+# ========================================
+
+# ---- UI 主题配置（无需修改） ----
+frame.background=#FFFFFF
+frame.foreground=#2B2B2B
+panel.background=#FFFFFF
+panel.foreground=#2B2B2B
+button.background=#808080
+button.foreground=#FFFFFF
+isDark=false
+
+# ---- 登录状态（由程序自动管理） ----
+login.time=null
+login.ID=null
+login.name=null
+login.grade=null
+
+# ---- MySQL 数据库配置（请修改为你的实际配置） ----
+db.user=root
+db.password=your_password_here
+db.server=127.0.0.1
+db.port=3306
+
+# ---- AES 加密密钥（请修改为你的密钥，必须为16位） ----
+encryption.key=your_secret_key

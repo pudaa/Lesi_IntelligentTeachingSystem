@@ -1,16 +1,24 @@
 // 创建加密工具类
 package utils;
 
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-import java.security.SecureRandom;
 import java.util.Base64;
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
+
+import tools.ConfigUtil;
 
 public class EncryptionUtil {
     private static final String ALGORITHM = "AES";
-    private static final String KEY = "LesiSecretKey123"; // 实际应用中应从安全位置获取
+    private static final String KEY;
+
+    static {
+        String configKey = ConfigUtil.getProperty("encryption.key");
+        if (configKey == null || configKey.isEmpty() || "null".equals(configKey)) {
+            throw new IllegalStateException("加密密钥未配置，请在配置文件中设置 encryption.key");
+        }
+        KEY = configKey;
+    }
 
     public static String encrypt(String data) { // 加密方法
         try {

@@ -1,9 +1,19 @@
 package JDBC;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import tools.ConfigUtil;
 
 /*
  * 创建数据库连接，并实现登录功能
@@ -18,11 +28,11 @@ public class OriConnectionUtil {
             return;
         }
 
-        // 数据库连接信息
-        String user = "root";
-        String password = "001978";
-        String server = "frp-bar.com";// 127.0.0.1
-        String port = "18714";// 3306
+        // 从配置文件中读取数据库连接信息（可在 lesi_user_config.properties 中覆盖）
+        String user = ConfigUtil.getProperty("db.user");
+        String password = ConfigUtil.getProperty("db.password");
+        String server = ConfigUtil.getProperty("db.server");
+        String port = ConfigUtil.getProperty("db.port");
 
         // 将上述信息拼接为一个 URL 地址
         String url = "jdbc:mysql://" + server + ":"+ port +"/" + database
@@ -45,30 +55,24 @@ public class OriConnectionUtil {
             return resultList;
         }
 
-        try {
-            ResultSet resultSet = null;
-            Statement statement = null;
-            statement = conn.createStatement();
-
-            String sql = "SELECT people_ID, people_name, password, grade FROM account WHERE phone_number ='" + phonenumber + "'";
-            resultSet = statement.executeQuery(sql);
-
-            if (resultSet != null && resultSet.next()) {
-                String passwordString = resultSet.getString("password"); 
-                if (passwordString.equals(password)) { 
-                    resultList.add("OK");
-                    resultList.add(resultSet.getString("people_ID"));
-                    resultList.add(resultSet.getString("people_name"));
-                    resultList.add(resultSet.getString("grade"));
+        String sql = "SELECT people_ID, people_name, password, grade FROM account WHERE phone_number = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, phonenumber);
+            try (ResultSet resultSet = pstmt.executeQuery()) {
+                if (resultSet.next()) {
+                    String passwordString = resultSet.getString("password"); 
+                    if (passwordString.equals(password)) { 
+                        resultList.add("OK");
+                        resultList.add(resultSet.getString("people_ID"));
+                        resultList.add(resultSet.getString("people_name"));
+                        resultList.add(resultSet.getString("grade"));
+                    } else {
+                        resultList.add("password error");
+                    }
                 } else {
-                    resultList.add("password error");
+                    resultList.add("username error");
                 }
-            } else { // 如果查不到用户名对应的信息
-                resultList.add("username error");
             }
-
-            resultSet.close();
-            statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
             resultList.add("数据库查询失败");

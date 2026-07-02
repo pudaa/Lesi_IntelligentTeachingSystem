@@ -1,13 +1,20 @@
 package ui.components;
 
-import com.formdev.flatlaf.FlatDarkLaf;
-import com.formdev.flatlaf.FlatLightLaf;
-import tools.ConfigUtil;
+import java.awt.Color;
+import java.awt.Image;
+import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
-import java.io.IOException;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatLightLaf;
+
+import tools.ColorUtil;
+import tools.ConfigUtil;
 
 public class BaseFrame extends JFrame {
     public BaseFrame(String title, int width, int height) {
@@ -83,14 +90,7 @@ public class BaseFrame extends JFrame {
     }
 
     private Color hexStringToColor(String hexString) {
-        if (hexString == null || hexString.isEmpty()) {
-            return null;
-        }
-        hexString = hexString.replace("#", "");
-        int r = Integer.parseInt(hexString.substring(0, 2), 16);
-        int g = Integer.parseInt(hexString.substring(2, 4), 16);
-        int b = Integer.parseInt(hexString.substring(4, 6), 16);
-        return new Color(r, g, b);
+        return ColorUtil.hexStringToColor(hexString);
     }
 
 }

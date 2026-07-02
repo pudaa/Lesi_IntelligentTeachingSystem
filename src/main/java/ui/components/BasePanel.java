@@ -1,11 +1,14 @@
 package ui.components;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+
+import javax.swing.JPanel;
+
+import tools.ColorUtil;
 import tools.ConfigUtil;
-
-import javax.swing.*;
-import java.awt.*;
-import java.io.IOException;
-
 
 
 public class BasePanel extends JPanel {
@@ -75,34 +78,7 @@ public class BasePanel extends JPanel {
     }
 
     private Color hexStringToColor(String hexString) {
-        if (hexString == null || hexString.isEmpty()) {
-            return null;
-        }
-        hexString = hexString.replace("#", "");
-        int r = Integer.parseInt(hexString.substring(0, 2), 16);
-        int g = Integer.parseInt(hexString.substring(2, 4), 16);
-        int b = Integer.parseInt(hexString.substring(4, 6), 16);
-        //System.out.println(r + " " + g + " " + b);
-        return new Color(r, g, b);
-    }
-    
-    @SuppressWarnings("CallToPrintStackTrace")
-    private static boolean isWindowsDarkMode() {
-        try {
-            Process process = Runtime.getRuntime().exec("reg query HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize /v AppsUseLightTheme");
-            process.waitFor();
-            java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.InputStreamReader(process.getInputStream()));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (line.contains("AppsUseLightTheme")) {
-                    String[] parts = line.split("    ");
-                    return parts[parts.length - 1].equals("0x0");
-                }
-            }
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
-        return false;
+        return ColorUtil.hexStringToColor(hexString);
     }
 
 }

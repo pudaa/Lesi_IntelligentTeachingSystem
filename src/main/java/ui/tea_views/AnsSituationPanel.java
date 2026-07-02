@@ -1,19 +1,34 @@
 package ui.tea_views;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.util.List;
+
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.table.DefaultTableModel;
+
 import JDBC.ConnectionUtil;
 import tools.ButtonEditor;
 import tools.ButtonRenderer;
 import tools.CustomTableCellRenderer;
 import ui.components.BaseLabel;
 import ui.components.BasePanel;
-
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.util.List;
 
 
 public class AnsSituationPanel extends BasePanel {
@@ -48,8 +63,6 @@ public class AnsSituationPanel extends BasePanel {
         searchField.addActionListener((ActionEvent e) -> {
             filterTable(searchField.getText());
         });
-        headPanel.add(searchLabel);
-        headPanel.add(searchField);
 
         JPanel contentPanel = new JPanel();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));

@@ -1,4 +1,9 @@
 
+import java.awt.Image;
+
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+
 import JDBC.ConnectionUtil;
 import tools.ConfigUtil;
 import ui.components.SyncProgressDialog;
@@ -6,10 +11,6 @@ import ui.start_views.LoginFrame;
 import ui.stu_views.StudentBackendFrame;
 import ui.tea_views.TeacherBackendFrame;
 import utils.RunStatusManager;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 
 public class Main {
